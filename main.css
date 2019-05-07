@@ -1,0 +1,11 @@
+.input-sm {
+  border:1px;
+  border: solid;
+  border: #ff0000;
+}
+
+.form-control:focus{
+    border-color: #cccccc;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}

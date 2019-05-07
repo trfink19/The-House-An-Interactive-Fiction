@@ -30,22 +30,101 @@ That means each student gets a starting location, and each room has rooms in it.
 
 */
 
-class Person {
-  constructor(name) {
+document.addEventListener("keydown", keyDownHandler, false);
+
+function keyDownHandler(e) {
+  if(e.key == "Enter") {
+    let input = document.getElementById('inputsm').value
+    //execute input script
+    addLine("> " + input)
+
+    //parser goes here...
+    if(/*Parser says "enter"*/5 == 5){
+      //get object to enter
+      let object = new Room("destination") //You won't make the object here when it's done
+      myLocation.exit()
+      myLocation = object
+      myLocation.enter()
+    }
+
+    document.getElementById("inputsm").value = "";
+  }
+}
+
+
+function addLine(text) {
+  let para = document.createElement("P");
+  let t = document.createTextNode(text);
+  para.appendChild(t);
+  document.getElementById("feed").appendChild(para);
+}
+
+class Room {
+  constructor(name, contents) {
     this.name = name;
+    if(contents != null) {
+      this.contents = contents;
+    } else {
+      this.contents = [];
+    }
   }
 
   enter() {
-    console.log("You find yourself in " + this.name + ".")
-    console.log("You see [contents]")
+    addLine("You find yourself in " + this.name + ".")
+
+    //Get contents of room
+    let contents = ""
+    if (this.contents.length > 0) {
+      for(var i = 0; i < this.contents.length; i++) {
+        if (i == this.contents.length - 1) {
+          if(i > 0) {
+            contents = contents + " and " + this.contents[i].name + ".";
+          } else {
+            contents = contents + this.contents[i].name + ".";
+          }
+        } else {
+          contents = contents + this.contents[i].name + ", ";
+        }
+      }
+      addLine("You see " + contents);
+    } else {
+      addLine("You see nothing")
+    }
   }
 
   exit() {
 
   }
 
+  addItems(items) {
+    for(var i = 0; i < items.length; i++) {
+      this.contents.push(items[i]);
+    }
+  }
 
+  addItem(item) {
+    this.contents.push(item);
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 alert("Loading main.js!")
-var myLocation = new Person("a hallway");
+var objectOfInterest;
+let hallway = new Room("another hallway")
+var myLocation = new Room("a hallway");
+
+myLocation.addItem(hallway)
+
 myLocation.enter();
