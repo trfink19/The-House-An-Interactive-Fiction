@@ -1,57 +1,53 @@
-/*
-Here is the basic loop:
-
-1.) Get object of interest
-2.) Write descriptive text (append child)
-3.) Listen for action
-    - Move (back, or specify destination)
-    - Inspect (read descriptive text)
-    - Take (has to be a container or thing)
-    - Talk (has to be a person)
-
-We set up the first thing as a series of interconnected rooms, with random numbers of doors
-Each door leads to a student's sketch. Each student will make a game state, I guess.
-
-Whenever the user enters a command, a function parses it and executes it.
-
-Essentially, the loop is:
-
-1.) Display descriptive text
-2.) Wait for input
-3.) Resolve methods
-
-Each Room is a state. So students need to instantiate their state with starting objects.
-Then, they add descriptive text.
-
-For each Room, load the rooms next to it.
-That means each student gets a starting location, and each room has rooms in it.
-
-
-
-*/
-
+// Handle user input
 document.addEventListener("keydown", keyDownHandler, false);
-
 function keyDownHandler(e) {
   if(e.key == "Enter") {
     let input = document.getElementById('inputsm').value
     //execute input script
     addLine("> " + input)
-
-    //parser goes here...
-    if(/*Parser says "enter"*/5 == 5){
-      //get object to enter
-      let object = new Room("destination") //You won't make the object here when it's done
-      myLocation.exit()
-      myLocation = object
-      myLocation.enter()
+    // Remove input trash
+    let articleRegex = / the| a| an/
+    input = input.replace(articleRegex, '')
+    // Parser for entering a room
+    let enter = /enter /;
+    let goBack = /go back/;
+    if(enter.test(input)){
+      let newLocation = input.replace(enter, '')
+      console.log("Regex test passed! New string: " + newLocation)
+      // Check to see which room we are trying to enter
+      let loop = true;
+      let i = 0;
+      while (loop == true) {
+        if(newLocation == myLocation.contents[i].name) {
+          //get object to enter
+          let object = myLocation.contents[i];
+          console.log("Moving to " + object.name + ".")
+          myLocation.exit();
+          cameFrom = myLocation;
+          myLocation = object;
+          myLocation.enter();
+          loop = false;
+        }
+        i++;
+        if (i == myLocation.contents.length) {
+          addLine("You don't see a " + newLocation + " here.");
+          loop = false;
+        }
+      }
     }
-
+    if(goBack.test(input)) {
+      let object = cameFrom;
+      console.log("Moving to " + object.name + ".");
+      myLocation.exit()
+      cameFrom = myLocation;
+      myLocation = object;
+      myLocation.enter();
+    }
     document.getElementById("inputsm").value = "";
   }
 }
 
-
+// Print message to the screen
 function addLine(text) {
   let para = document.createElement("P");
   let t = document.createTextNode(text);
@@ -59,9 +55,11 @@ function addLine(text) {
   document.getElementById("feed").appendChild(para);
 }
 
+// Room class
 class Room {
-  constructor(name, contents) {
+  constructor(name, descriptor, contents) {
     this.name = name;
+    this.descriptor = descriptor;
     if(contents != null) {
       this.contents = contents;
     } else {
@@ -70,7 +68,7 @@ class Room {
   }
 
   enter() {
-    addLine("You find yourself in " + this.name + ".")
+    addLine("You find yourself in a " + this.name + ".")
 
     //Get contents of room
     let contents = ""
@@ -86,7 +84,10 @@ class Room {
           contents = contents + this.contents[i].name + ", ";
         }
       }
-      addLine("You see " + contents);
+      if(this.descriptor) {
+        addLine(this.descriptor)
+      }
+      addLine("You see a " + contents);
     } else {
       addLine("You see nothing")
     }
@@ -107,24 +108,31 @@ class Room {
   }
 }
 
+class Item {
+  constructor(name, descriptor) {
+    this.name = name;
+    this.descriptor = descriptor;
+  }
+
+  inspect() {
+    let description = this.descriptor
+    return description
+  }
+}
 
 
 
-
-
-
-
-
-
-
-
-
-
+// Create the contents of your room here.
 alert("Loading main.js!")
-var objectOfInterest;
-let hallway = new Room("another hallway")
+var cameFrom;
+let hallway = new Room("dusty hallway")
+let vase = new Item("vase", "made of blue glass, chipped on top. Filled with a dark liquid.")
+let room = new Room("dark room")
+hallway.addItem(vase)
+let locations = []
+locations.push(hallway, room)
 var myLocation = new Room("a hallway");
 
-myLocation.addItem(hallway)
+myLocation.addItems(locations)
 
 myLocation.enter();
