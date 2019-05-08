@@ -29,7 +29,7 @@ function keyDownHandler(e) {
           loop = false;
         }
         i++;
-        if (i == myLocation.contents.length) {
+        if (i > myLocation.contents.length) {
           addLine("You don't see a " + newLocation + " here.");
           loop = false;
         }
@@ -131,7 +131,7 @@ let room = new Room("dark room")
 hallway.addItem(vase)
 let locations = []
 locations.push(hallway, room)
-var myLocation = new Room("a hallway");
+var myLocation = new Room("hallway");
 
 myLocation.addItems(locations)
 
