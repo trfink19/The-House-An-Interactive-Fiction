@@ -1,50 +1,59 @@
 // Handle user input
+// This function gets triggered whenever the 'enter' key gets pressed
 document.addEventListener("keydown", keyDownHandler, false);
+
 function keyDownHandler(e) {
-  if(e.key == "Enter") {
+  if (e.key == "Enter") {
     let input = document.getElementById('inputsm').value
-    //execute input script
-    addLine("> " + input)
-    // Remove input trash
-    let articleRegex = / the| a| an/
-    input = input.replace(articleRegex, '')
-    // Parser for entering a room
-    let enter = /enter /;
-    let goBack = /go back/;
-    if(enter.test(input)){
-      let newLocation = input.replace(enter, '')
-      console.log("Regex test passed! New string: " + newLocation)
-      // Check to see which room we are trying to enter
-      let loop = true;
-      let i = 0;
-      while (loop == true) {
-        if(newLocation == myLocation.contents[i].name) {
-          //get object to enter
-          let object = myLocation.contents[i];
-          console.log("Moving to " + object.name + ".")
-          myLocation.exit();
-          cameFrom = myLocation;
-          myLocation = object;
-          myLocation.enter();
-          loop = false;
-        }
-        i++;
-        if (i > myLocation.contents.length) {
-          addLine("You don't see a " + newLocation + " here.");
-          loop = false;
+    if (input.length > 0) {
+      //execute input script
+      addLine("> " + input)
+      // Remove input trash
+      let articleRegex = / the| a| an/
+      input = input.replace(articleRegex, '')
+      // Parser for entering a room
+      let enter = /enter /;
+      let goBack = /go back/;
+      if (enter.test(input)) {
+        let newLocation = input.replace(enter, '')
+        console.log("Regex test passed! New string: " + newLocation)
+        // Check to see which room we are trying to enter
+        let loop = true;
+        let i = 0;
+        while (loop == true) {
+          if (i > myLocation.contents.length || myLocation.contents.length == 0 || myLocation.contents == null) {
+            addLine("You don't see a " + newLocation + " here.");
+            loop = false;
+          } else {
+            if (newLocation == myLocation.contents[i].name) {
+              //get object to enter
+              let object = myLocation.contents[i];
+              console.log("Moving to " + object.name + ".")
+              myLocation.exit();
+              cameFrom = myLocation;
+              myLocation = object;
+              myLocation.enter();
+              loop = false;
+            }
+            i++;
+          }
         }
       }
+      if (goBack.test(input)) {
+        let object = cameFrom;
+        console.log("Moving to " + object.name + ".");
+        myLocation.exit()
+        cameFrom = myLocation;
+        myLocation = object;
+        myLocation.enter();
+      }
+      document.getElementById("inputsm").value = "";
+    } else {
+      addLine("Time passes... You start feeling nervous.")
     }
-    if(goBack.test(input)) {
-      let object = cameFrom;
-      console.log("Moving to " + object.name + ".");
-      myLocation.exit()
-      cameFrom = myLocation;
-      myLocation = object;
-      myLocation.enter();
-    }
-    document.getElementById("inputsm").value = "";
   }
+  let elmnt = document.getElementById("footer");
+  elmnt.scrollIntoView();
 }
 
 // Print message to the screen
@@ -60,7 +69,7 @@ class Room {
   constructor(name, descriptor, contents) {
     this.name = name;
     this.descriptor = descriptor;
-    if(contents != null) {
+    if (contents != null) {
       this.contents = contents;
     } else {
       this.contents = [];
@@ -73,9 +82,9 @@ class Room {
     //Get contents of room
     let contents = ""
     if (this.contents.length > 0) {
-      for(var i = 0; i < this.contents.length; i++) {
+      for (var i = 0; i < this.contents.length; i++) {
         if (i == this.contents.length - 1) {
-          if(i > 0) {
+          if (i > 0) {
             contents = contents + " and " + this.contents[i].name + ".";
           } else {
             contents = contents + this.contents[i].name + ".";
@@ -84,7 +93,7 @@ class Room {
           contents = contents + this.contents[i].name + ", ";
         }
       }
-      if(this.descriptor) {
+      if (this.descriptor) {
         addLine(this.descriptor)
       }
       addLine("You see a " + contents);
@@ -98,7 +107,7 @@ class Room {
   }
 
   addItems(items) {
-    for(var i = 0; i < items.length; i++) {
+    for (var i = 0; i < items.length; i++) {
       this.contents.push(items[i]);
     }
   }
