@@ -1,4 +1,37 @@
 // Handle user input
+function parse(input) {
+  let regexes = [
+    /enter/,
+    /go back/,
+    /inspect/,
+  ]
+  let articleRegex = / the| a| an/
+  input = input.replace(articleRegex, '')
+  let action;
+  let location;
+  for(var i = 0; i < regexes.length; i++) {
+    if(regexes[i].test(input)) {
+      //console.log("Regex test passed")
+      action = input.match(regexes[i])
+      console.log("Action: " + action)
+      input = input.replace(regexes[i], '');
+      location = input;
+      console.log("Location: " + location)
+    } else {
+      console.log("No match found");
+    }
+  }
+  let results
+  if (location != null && action != null) {
+    results = {
+      location: location,
+      action: action,
+    }
+  }
+  return results
+}
+
+
 // This function gets triggered whenever the 'enter' key gets pressed
 document.addEventListener("keydown", keyDownHandler, false);
 
@@ -8,49 +41,13 @@ function keyDownHandler(e) {
     if (input.length > 0) {
       //execute input script
       addLine("> " + input)
-      // Remove input trash
-      let articleRegex = / the| a| an/
-      input = input.replace(articleRegex, '')
-      // Parser for entering a room
-      let enter = /enter /;
-      let goBack = /go back/;
-      if (enter.test(input)) {
-        let newLocation = input.replace(enter, '')
-        console.log("Regex test passed! New string: " + newLocation)
-        // Check to see which room we are trying to enter
-        let loop = true;
-        let i = 0;
-        while (loop == true) {
-          if (i > myLocation.contents.length || myLocation.contents.length == 0 || myLocation.contents == null) {
-            addLine("You don't see a " + newLocation + " here.");
-            loop = false;
-          } else {
-            if (newLocation == myLocation.contents[i].name) {
-              //get object to enter
-              let object = myLocation.contents[i];
-              console.log("Moving to " + object.name + ".")
-              myLocation.exit();
-              cameFrom = myLocation;
-              myLocation = object;
-              myLocation.enter();
-              loop = false;
-            }
-            i++;
-          }
-        }
-      }
-      if (goBack.test(input)) {
-        let object = cameFrom;
-        console.log("Moving to " + object.name + ".");
-        myLocation.exit()
-        cameFrom = myLocation;
-        myLocation = object;
-        myLocation.enter();
-      }
-      document.getElementById("inputsm").value = "";
+      // Parse the input
+      let results = parse(input);
+      console.log("Location: " + results.location + "; Action: " + results.action);
     } else {
       addLine("Time passes... You start feeling nervous.")
     }
+    document.getElementById("inputsm").value = "";
   }
   let elmnt = document.getElementById("footer");
   elmnt.scrollIntoView();
@@ -85,7 +82,7 @@ class Room {
       for (var i = 0; i < this.contents.length; i++) {
         if (i == this.contents.length - 1) {
           if (i > 0) {
-            contents = contents + " and " + this.contents[i].name + ".";
+            contents = contents + " and a " + this.contents[i].name + ".";
           } else {
             contents = contents + this.contents[i].name + ".";
           }
