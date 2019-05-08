@@ -9,25 +9,20 @@ function parse(input) {
   input = input.replace(articleRegex, '')
   let action;
   let location;
-  for(var i = 0; i < regexes.length; i++) {
-    if(regexes[i].test(input)) {
+  for (var i = 0; i < regexes.length; i++) {
+    if (regexes[i].test(input)) {
       //console.log("Regex test passed")
       action = input.match(regexes[i])
-      console.log("Action: " + action)
+      console.log("Action: " + action + ".")
       input = input.replace(regexes[i], '');
       location = input;
-      console.log("Location: " + location)
+      location = location.replace(/ /,'')
+      console.log("Location: " + location + ".")
     } else {
       console.log("No match found");
     }
   }
-  let results
-  if (location != null && action != null) {
-    results = {
-      location: location,
-      action: action,
-    }
-  }
+  let results = [location, action]
   return results
 }
 
@@ -43,7 +38,20 @@ function keyDownHandler(e) {
       addLine("> " + input)
       // Parse the input
       let results = parse(input);
-      console.log("Location: " + results.location + "; Action: " + results.action);
+      let newLocation
+      console.log(results[0])
+      for(i = 0; i < myLocation.contents.length; i++) {
+
+        if(results[0] == myLocation.contents[i].name) {
+          console.log("Match!")
+          newLocation = myLocation.contents[i]
+        }
+      }
+      if(newLocation != null) {
+        cameFrom = myLocation;
+        myLocation = newLocation
+        myLocation.enter();
+      }
     } else {
       addLine("Time passes... You start feeling nervous.")
     }
