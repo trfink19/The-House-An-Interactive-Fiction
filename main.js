@@ -151,15 +151,20 @@ class Item {
 
 
 // Create the contents of your room here.
-alert("Loading main.js!");
-var cameFrom;
+alert("Loading main.js!"); //Don't change this line
+var cameFrom;   // global variable, don't change!
+var myLocation; // global variable, don't change!
+
+//Create your objects
 let hallway = new Room("dusty hallway");
 let vase = new Item("vase", "made of blue glass, chipped on top. Filled with a dark liquid.")
 let room = new Room("dark room");
+
+// Put them in their spots
 hallway.addItem(vase);
 let locations = [];
 locations.push(hallway, room);
-var myLocation = new Room("hallway");
+myLocation = new Room("hallway");
 
 myLocation.addItems(locations);
 
