@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 .input-sm {
   border:1px;
   border: solid;
