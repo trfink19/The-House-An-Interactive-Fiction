@@ -26,6 +26,24 @@ function parse(input) {
   return results
 }
 
+function doAction(results, newLocation, myLocation, cameFrom) {
+  console.log("Doing action on " + newLocation.name)
+  if (results[1] == 'enter' && newLocation != null) {
+    cameFrom = myLocation;
+    myLocation = newLocation
+    myLocation.enter();
+  }
+  if (results[1] == 'inspect' && newLocation != null) {
+    console.log("Inspecting...")
+    newLocation.inspect()
+  }
+  if (results[1] == 'go back') {
+    let destination = cameFrom;
+    cameFrom = myLocation;
+    myLocation = destination;
+    myLocation.enter();
+  }
+}
 
 // This function gets triggered whenever the 'enter' key gets pressed
 document.addEventListener("keydown", keyDownHandler, false);
@@ -47,6 +65,7 @@ function keyDownHandler(e) {
           newLocation = myLocation.contents[i]
         }
       }
+      //doAction(results, newLocation, myLocation, cameFrom)
       if (results[1] == 'enter' && newLocation != null) {
         cameFrom = myLocation;
         myLocation = newLocation
