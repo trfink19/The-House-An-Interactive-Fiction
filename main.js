@@ -16,7 +16,7 @@ function parse(input) {
       console.log("Action: " + action + ".")
       input = input.replace(regexes[i], '');
       location = input;
-      location = location.replace(/ /,'')
+      location = location.replace(/ /, '')
       console.log("Location: " + location + ".")
     } else {
       console.log("No match found");
@@ -35,21 +35,31 @@ function keyDownHandler(e) {
     let input = document.getElementById('inputsm').value
     if (input.length > 0) {
       //execute input script
-      addLine("> " + input)
+      addLine("> " + input, 'user')
       // Parse the input
       let results = parse(input);
       let newLocation
       console.log(results[0])
-      for(i = 0; i < myLocation.contents.length; i++) {
+      for (i = 0; i < myLocation.contents.length; i++) {
 
-        if(results[0] == myLocation.contents[i].name) {
+        if (results[0] == myLocation.contents[i].name) {
           console.log("Match!")
           newLocation = myLocation.contents[i]
         }
       }
-      if(newLocation != null) {
+      if (results[1] == 'enter' && newLocation != null) {
         cameFrom = myLocation;
         myLocation = newLocation
+        myLocation.enter();
+      }
+      if (results[1] == 'inspect' && newLocation != null) {
+        console.log("Inspecting...")
+        newLocation.inspect()
+      }
+      if (results[1] == 'go back') {
+        let destination = cameFrom;
+        cameFrom = myLocation;
+        myLocation = destination;
         myLocation.enter();
       }
     } else {
@@ -62,8 +72,11 @@ function keyDownHandler(e) {
 }
 
 // Print message to the screen
-function addLine(text) {
+function addLine(text, id) {
   let para = document.createElement("P");
+  if (id != null) {
+    para.setAttribute("id", id);
+  }
   let t = document.createTextNode(text);
   para.appendChild(t);
   document.getElementById("feed").appendChild(para);
@@ -81,7 +94,7 @@ class Room {
     }
   }
 
-  enter() {
+  enter(mode) {
     addLine("You find yourself in a " + this.name + ".")
 
     //Get contents of room
@@ -107,6 +120,7 @@ class Room {
     }
   }
 
+
   exit() {
 
   }
@@ -130,23 +144,23 @@ class Item {
 
   inspect() {
     let description = this.descriptor
-    return description
+    addLine("The " + this.name + " is " + description)
   }
 }
 
 
 
 // Create the contents of your room here.
-alert("Loading main.js!")
+alert("Loading main.js!");
 var cameFrom;
-let hallway = new Room("dusty hallway")
+let hallway = new Room("dusty hallway");
 let vase = new Item("vase", "made of blue glass, chipped on top. Filled with a dark liquid.")
-let room = new Room("dark room")
-hallway.addItem(vase)
-let locations = []
-locations.push(hallway, room)
+let room = new Room("dark room");
+hallway.addItem(vase);
+let locations = [];
+locations.push(hallway, room);
 var myLocation = new Room("hallway");
 
-myLocation.addItems(locations)
+myLocation.addItems(locations);
 
 myLocation.enter();
