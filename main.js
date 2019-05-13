@@ -36,7 +36,7 @@ function doAction(results, player, newLocation) {
   }
   if (results[1] == 'inspect') {
     console.log("Inspecting " + newLocation.name)
-    newLocation.inspect()
+    newLocation.inspect(player)
   }
   if (results[1] == 'go back') {
     let destination = player.cameFrom;
@@ -152,10 +152,12 @@ class Room {
     }
   }
 
-  inspect() {
-    if (this.descriptor) {
+  inspect(player) {
+    if (this.descriptor && player.location == this) {
       console.log("Printing description")
       addLine(this.descriptor);
+    } else {
+      addLine("You're too far away to see it well.")
     }
   }
 
