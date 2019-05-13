@@ -67,11 +67,6 @@ function keyDownHandler(e) {
         if (results[0] == player.location.contents[i].name) {
           console.log("Match!")
           newLocation = player.location.contents[i];
-          // } else if(results[0] == player.location.name) {
-          //   console.log("Action refers to self!");
-          //   newLocation = player.location;
-          //   console.log(newLocation.descriptor);
-          // }
         }
       }
       if (results[0] == player.location.name) {
@@ -82,21 +77,6 @@ function keyDownHandler(e) {
 
       player = doAction(results, player, newLocation)
       console.log("Player location: " + player.location.name)
-      // if (results[1] == 'enter' && newLocation != null) {
-      //   player.cameFrom = player.location;
-      //   player.location = newLocation
-      //   player.location.enter();
-      // }
-      // if (results[1] == 'inspect' && newLocation != null) {
-      //   console.log("Inspecting...")
-      //   newLocation.inspect()
-      // }
-      // if (results[1] == 'go back') {
-      //   let destination = player.cameFrom;
-      //   player.cameFrom = player.location;
-      //   player.location = destination;
-      //   player.location.enter();
-      // }
     } else {
       addLine("Time passes... You start feeling nervous.")
     }
