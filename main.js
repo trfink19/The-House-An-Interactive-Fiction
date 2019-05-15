@@ -1,6 +1,3 @@
-
-
-
 alert("Loading main.js!"); //Don't change this line
 player = new Player()
 
@@ -12,16 +9,36 @@ let bedroom = new Room('bedroom', 'It is a bedroom')
 var key = new Item('rusty key', 'It is a large, heavy brass key.')
 
 // Create the function
-let jump = function (action, player, object) {
-  addLine('You jump. As you land, you hear a loud creak from the floor.')
+let jumpaction = /jump/;
+let jump = function(action, player, object) {
+  if (action == 'jump') {
+    addLine('You jump. As you land, you hear a loud creak from the floor.');
+  }
   return player
 }
 
+//To create a function that interacts with an object...
+let eatAction = /eat/;
+let eat = function(action, player, object) {
+  if (action == 'eat') {
+    object.eat();
+  }
+  return player;
+}
 
-//Decide what the player should type to run the function
-let jumpaction = /jump/;
+//... then add a method to an object. This only works for the one object.
+vase.eat = function() {
+  addLine("You ate the " + this.name)
+}
+
+// You can also extend the class, adding an eat() method to all items in your game.
+Item.prototype.eat = function () {
+  addLine("You ate the " + this.name);
+}
+
 //Add the function to the action list
 addAction(jumpaction, jump);
+addAction(eatAction, eat);
 
 // Put them in their spots
 hallway.addItem(vase);
