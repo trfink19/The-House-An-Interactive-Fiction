@@ -6,6 +6,31 @@ var regexes = [
   /inspect/,
 ]
 
+var actions = [
+  function (action, player, object) {
+    if (action == 'enter' && object != null) {
+      player.move(object)
+    }
+    return player;
+  },
+  function (action, player, object) {
+    if (action == 'inspect') {
+      console.log("Inspecting " + object.name)
+      object.inspect(player)
+    }
+    return player;
+  },
+  function (action, player, object) {
+    if (action == 'go back') {
+      let destination = player.cameFrom;
+      player.cameFrom = player.location;
+      player.location = destination;
+      player.location.enter();
+    }
+    return player;
+  },
+]
+
 function parse(input) {
   let articleRegex = / the| a| an/
   input = input.replace(articleRegex, '')
@@ -28,21 +53,18 @@ function parse(input) {
   return results
 }
 
-function doAction(results, player, newLocation) {
-  if (results[1] == 'enter' && newLocation != null) {
-    player.cameFrom = player.location;
-    player.location = newLocation
-    player.location.enter();
+function addAction(actionName, actionFunction) {
+  console.log("Adding action...")
+  regexes.push(actionName);
+  actions.push(actionFunction);
+  for(i in regexes) {
+    console.log(regexes[i])
   }
-  if (results[1] == 'inspect') {
-    console.log("Inspecting " + newLocation.name)
-    newLocation.inspect(player)
-  }
-  if (results[1] == 'go back') {
-    let destination = player.cameFrom;
-    player.cameFrom = player.location;
-    player.location = destination;
-    player.location.enter();
+}
+
+function doAction(action, player, newLocation) {
+  for(i in actions) {
+    player = actions[i](action, player, newLocation);
   }
   return player
 }
@@ -75,7 +97,7 @@ function keyDownHandler(e) {
         console.log(newLocation.descriptor);
       }
 
-      player = doAction(results, player, newLocation)
+      player = doAction(results[1], player, newLocation)
       console.log("Player location: " + player.location.name)
     } else {
       addLine("Time passes... You start feeling nervous.")
@@ -109,7 +131,8 @@ class Room {
     }
   }
 
-  enter(mode) {
+  enter() {
+
     addLine("You find yourself in a " + this.name + ".")
 
     //Get contents of room
@@ -133,7 +156,7 @@ class Room {
   }
 
   inspect(player) {
-    if (this.descriptor && player.location == this) {
+    if (this.descriptor) {
       console.log("Printing description")
       addLine(this.descriptor);
     } else {
@@ -173,5 +196,11 @@ class Player {
   constructor(location) {
     this.location = location;
     this.cameFrom = null;
+  }
+
+  move(location) {
+    this.cameFrom = this.location
+    this.location = location;
+    this.location.enter();
   }
 }
