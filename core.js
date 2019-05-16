@@ -6,6 +6,31 @@ var regexes = [
   /inspect/,
 ]
 
+var actions = [
+  function(action, player, object) {
+    if (action == 'enter' && object != null) {
+      player.move(object)
+    }
+    return player;
+  },
+  function(action, player, object) {
+    if (action == 'inspect') {
+      console.log("Inspecting " + object.name)
+      object.inspect(player)
+    }
+    return player;
+  },
+  function(action, player, object) {
+    if (action == 'go back') {
+      let destination = player.cameFrom;
+      player.cameFrom = player.location;
+      player.location = destination;
+      player.location.enter();
+    }
+    return player;
+  },
+]
+
 function parse(input) {
   let articleRegex = / the| a| an/
   input = input.replace(articleRegex, '')
@@ -28,21 +53,30 @@ function parse(input) {
   return results
 }
 
-function doAction(results, player, newLocation) {
-  if (results[1] == 'enter' && newLocation != null) {
-    player.cameFrom = player.location;
-    player.location = newLocation
-    player.location.enter();
+function addAction(actionName, actionFunction) {
+  console.log("Adding action...")
+  regexes.push(actionName);
+  actions.push(actionFunction);
+  for (i in regexes) {
+    console.log(regexes[i])
   }
-  if (results[1] == 'inspect') {
-    console.log("Inspecting " + newLocation.name)
-    newLocation.inspect(player)
+}
+
+function doAction(action, player, newLocation) {
+  let e = 0;
+  for (i in actions) {
+    try {
+      throw player = actions[i](action, player, newLocation);
+    } catch (err) {
+      if (err != null) {
+        e++;
+      }
+      console.log(err)
+    }
   }
-  if (results[1] == 'go back') {
-    let destination = player.cameFrom;
-    player.cameFrom = player.location;
-    player.location = destination;
-    player.location.enter();
+  console.log(actions.length);
+  if (e < actions.length - 1) {
+    addLine("You can't do that.");
   }
   return player
 }
@@ -75,7 +109,7 @@ function keyDownHandler(e) {
         console.log(newLocation.descriptor);
       }
 
-      player = doAction(results, player, newLocation)
+      player = doAction(results[1], player, newLocation)
       console.log("Player location: " + player.location.name)
     } else {
       addLine("Time passes... You start feeling nervous.")
@@ -109,9 +143,10 @@ class Room {
     }
   }
 
-  enter(mode) {
-    addLine("You find yourself in a " + this.name + ".")
+  enter() {
 
+
+    let text;
     //Get contents of room
     let contents = ""
     if (this.contents.length > 0) {
@@ -126,14 +161,15 @@ class Room {
           contents = contents + this.contents[i].name + ", ";
         }
       }
-      addLine("You see a " + contents);
+      text = "You see a " + contents;
     } else {
-      addLine("You see nothing")
+      text = "You see nothing.";
     }
+    addLine("You find yourself in a " + this.name + ". " + text);
   }
 
   inspect(player) {
-    if (this.descriptor && player.location == this) {
+    if (this.descriptor) {
       console.log("Printing description")
       addLine(this.descriptor);
     } else {
@@ -173,5 +209,11 @@ class Player {
   constructor(location) {
     this.location = location;
     this.cameFrom = null;
+  }
+
+  move(location) {
+    this.cameFrom = this.location
+    this.location = location;
+    this.location.enter();
   }
 }
