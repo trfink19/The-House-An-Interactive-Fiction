@@ -194,7 +194,7 @@ class Room {
 }
 
 class Door extends Room {
-  constructor(name, contents, descriptor) {
+  constructor(name, descriptor) {
     super(name, descriptor);
     this.locked = true;
     this.contents = null;
