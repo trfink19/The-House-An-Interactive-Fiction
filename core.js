@@ -9,8 +9,10 @@ var regexes = [
 var actions = [
   function(action, player, object) {
     if (action == 'enter' && object != null) {
-      let destination = player.location;
       destination = object.enter();
+      if(destination == null) {
+        destination = player.location;
+      }
       player.move(destination)
     }
     return player;
@@ -168,7 +170,6 @@ class Room {
       text = "You see nothing.";
     }
     addLine("You find yourself in a " + this.name + ". " + text);
-    return this;
   }
 
   inspect(player) {
@@ -215,10 +216,8 @@ class Player {
   }
 
   move(location) {
-    if (location != null) {
-      this.cameFrom = this.location
-      this.location = location;
-      this.location.enter();
-    }
+    this.cameFrom = this.location
+    this.location = location;
+    this.location.enter();
   }
 }
