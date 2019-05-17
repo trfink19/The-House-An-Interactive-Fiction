@@ -1,3 +1,49 @@
+class Door extends Room {
+  constructor(name, contents, descriptor) {
+    super(name, descriptor);
+    this.locked = false;
+    this.contents = null;
+  }
+
+  addItem(obj) {
+    this.contents = obj;
+  }
+
+  enter() {
+    if(this.locked == false) {
+      let text;
+      //Get contents of room
+      let contents = ""
+      if (this.contents.length > 0) {
+        for (var i = 0; i < this.contents.length; i++) {
+          if (i == this.contents.length - 1) {
+            if (i > 0) {
+              contents = contents + " and a " + this.contents[i].name + ".";
+            } else {
+              contents = contents + this.contents[i].name + ".";
+            }
+          } else {
+            contents = contents + this.contents[i].name + ", ";
+          }
+        }
+        text = "You see a " + contents;
+      } else {
+        text = "You see nothing.";
+      }
+      return this.contents;
+    } else {
+      addLine("The door is locked.")
+      return null;
+    }
+  }
+
+  open() {
+    if(this.locked == false) {
+      player.move()
+    }
+  }
+}
+
 alert("Loading main.js!"); //Don't change this line
 player = new Player()
 
@@ -46,12 +92,15 @@ Item.prototype.eat = function() {
 
 //Add the function to the action list
 
+let door = new Door('door', 'It is a door');
 
+door.addItem(room);
 
 // Put them in their spots
 hallway.addItem(vase);
 hallway.addItem(room);
 hallway.addItem(key);
+hallway.addItem(door);
 room.addItem(bedroom);
 room.addItem(hallway);
 
