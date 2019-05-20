@@ -1,46 +1,40 @@
 
+
 // Create the contents of your room here.
 alert("Loading main.js!"); //Don't change this line
 player = new Player()
 
 //Create your objects
+let aRoom = new Room("aRoom","A cold room with only a table and a tv with a message and a note");
+let tv = new Item("tv", "with a message on the screen-- You must find all the missing items that are around the diferent rooms in this section of the house");
+let note = new Item("note","A note right next to the tv with a message that reads--You are in for a surprise")
+let livingRoom = new Room("livingRoom","A samll livingRoom with two tables and a sofa");
+let thumbDrive = new Item("thumbDrive","Siting on the big table a thumbDrive holds something withing it");
+let battery = new Item("bettery","A very shiny bettery and a powerfull one as well it can last for two months.");
+let library = new Room("library"," A small sized library with only two book stands");
+let headset = new Item("headset","A nice lookign headset with a gold plating the sound quality is amazing.");
+let basement = new Room("basement","It feels very cold but there is sometihng legendary here.");
+let legenDaryController = new Item("legenDary Controller","Inside the chest there is a legendary gaming controlle it is plated with pure gold.")
+let chest = new Item("chest","Inside of it there is sometihng trully special.");
+let TheRoom = new Room("TheRoom","TheRom has a big tv and a very comfortable chair.");
+let bigTV = new Item("bigTV"," a 4k gaming TV.");
+let TvRemote = new Item("Tv Remote","A silver plated remote for the tv.");
+let chair = new Item("chair"," very comfortable chair with a soda dispenser.");
 
-let bedroom = new Room('bedroom', 'It is a bedroom.');
-let start = new Room('kitchen', 'It is a kitchen.');
-let hallway = new Room('hallway','It is a hallway.');
-let livingRoom = new Room('living room','It is a living room.');
-let garage = new Room('garage','stores my cars.');
-
-let stove = new Item('stove', 'It is a large, steel stove.');
-let bed = new Item ('bed', 'It is a mattress that I can sleep on.');
-let lamp = new Item('lamp','It is a light for my hallway.');
-let couch = new Item('couch','It is a piece of furniture to sit on.');
-let rx7 = new Item('rx7','It is a car in my garage.');
-let Television = new Item('Television','It is a Television');
-let refrigerator = new Item('refrigerator','It holds my food.');
-let table = new Item('table','It is a table.');
-let dresser = new Item('dresser','holds my clothes');
-let microwave = new Item('microwave','It heats my food.');
-
-
-start.addItem(bedroom);
-start.addItem(bed);
-start.addItem(hallway);
-start.addItem(lamp);
-start.addItem(livingRoom);
-start.addItem(couch);
-start.addItem(Television);
-start.addItem(garage);
-start.addItem(rx7);
-start.addItem(refrigerator);
-start.addItem(table);
-start.addItem(dresser);
-start.addItem(microwave);
-start.addItem(stove);
+TheRoom.addItem(bigTV);
+TheRoom.addItem(TvRemote);
+TheRoom.addItem(chair);
+basement.addItem(legenDaryController);
+basement.addItem(chest);
+livingRoom.addItem(thumbDrive);
+livingRoom.addItem(battery);
+library.addItem(headset);
+aRoom.addItem(TheRoom);
+aRoom.addItem(basement);
+aRoom.addItem(tv);
+aRoom.addItem(livingRoom);
+aRoom.addItem(library);
+aRoom.addItem(note);
 
 
-player.move(start);
-
-Item.prototype.eat = function () {
-  addLine("You set the " + this.table);
-}
+player.move(aRoom);
