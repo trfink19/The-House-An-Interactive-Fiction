@@ -1,19 +1,19 @@
 var scripts1 = [
-  'aiden',
-  'David',
-  'derick',
-  'Ediomar',
-  'james',
-  'gio',
+  'adrian',
+  'Casey Walker',
+  'evan',
+  'Glenn',
+  'hana',
+  'huruy',
+
 ];
 
 var scripts2 = [
-  'kalvin',
-  'kevin',
-  'Logan',
-  'Pierre',
-  'stephone',
-  'xavier',
+  'juan',
+  'michael',
+  'sam',
+  'tristan',
+  'jon',
 ]
 
 var modules1 = [];
