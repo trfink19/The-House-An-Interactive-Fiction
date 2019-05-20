@@ -257,8 +257,8 @@ class Player {
 }
 
 class Module extends Room {
-  constructor(script) {
-    super('door', 'description');
+  constructor(name, script, description) {
+    super(name, description);
     this.script = script;
   }
 
@@ -272,7 +272,7 @@ class Module extends Room {
     let script = document.createElement('script');
     script.type = 'text/javascript';
     script.onload = function() {
-      load();
+      //You can put a load thing here.
     }
     script.src = this.script;
     body.appendChild(script);
