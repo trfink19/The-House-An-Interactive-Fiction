@@ -1,43 +1,14 @@
 // Handle user input
-
 var regexes = [
   /enter/,
   /go back/,
   /inspect/,
-  /exit/,
-]
-
-var actions = [
-  function(action, player, object) {
-    if (action == 'enter' && object != null) {
-      let destination = object.enter();
-      player.move(destination)
-    }
-    return player;
-  },
-  function(action, player, object) {
-    if (action == 'inspect') {
-      console.log("Inspecting " + object.name)
-      object.inspect(player)
-    }
-    return player;
-  },
-  function(action, player, object) {
-    if (action == 'go back') {
-      player.move(player.cameFrom);
-    }
-    return player;
-  },
-  function(action, player, object) {
-    if(action == 'exit') {
-      location.reload();
-    }
-    return player;
-  }
+  /take/,
+  /inventory/,
 ]
 
 function parse(input) {
-  let articleRegex = /the |a |an /
+  let articleRegex = / the| a| an/
   input = input.replace(articleRegex, '')
   let action;
   let location;
@@ -58,30 +29,31 @@ function parse(input) {
   return results
 }
 
-function addAction(actionName, actionFunction) {
-  console.log("Adding action...")
-  regexes.push(actionName);
-  actions.push(actionFunction);
-  for (i in regexes) {
-    console.log(regexes[i])
+function doAction(results, player, newLocation) {
+  if (results[1] == 'enter' && newLocation != null) {
+    player.cameFrom = player.location;
+    player.location = newLocation
+    player.location.enter();
   }
-}
-
-function doAction(action, player, newLocation) {
-  let e = 0;
-  for (i in actions) {
-    try {
-      throw player = actions[i](action, player, newLocation);
-    } catch (err) {
-      if (err != null) {
-        e++;
-      }
-      console.log(err)
-    }
+  if (results[1] == 'inspect') {
+    console.log("Inspecting " + newLocation.name)
+    newLocation.inspect(player)
   }
-  console.log(actions.length);
-  if (e < actions.length - 1) {
-    addLine("You can't do that.");
+  if (results[1] == 'go back') {
+    let destination = player.cameFrom;
+    player.cameFrom = player.location;
+    player.location = destination;
+    player.location.enter();
+  }
+  if (results[1] == 'take') {
+    console.log("Taking " + newLocation.name)
+    player.take(newLocation);
+    object.take()
+  }
+  if (results[1] == 'inventory') {
+    console.log(player.location.name)
+    console.log("Printing inventory...")
+    player.printInventory();
   }
   return player
 }
@@ -114,10 +86,10 @@ function keyDownHandler(e) {
         console.log(newLocation.descriptor);
       }
 
-      player = doAction(results[1], player, newLocation)
+      player = doAction(results, player, newLocation)
       console.log("Player location: " + player.location.name)
     } else {
-      addLine("Time passes... You start feeling nervous.")
+      addLine("Time passes...You start feeling nervous. It feels like you're being watched")
     }
     document.getElementById("inputsm").value = "";
   }
@@ -148,12 +120,9 @@ class Room {
     }
   }
 
-  enter() {
-    return this;
-  }
+  enter(mode) {
+    addLine("You are now in the " + this.name + ".")
 
-  readContents() {
-    let text;
     //Get contents of room
     let contents = ""
     if (this.contents.length > 0) {
@@ -168,15 +137,14 @@ class Room {
           contents = contents + this.contents[i].name + ", ";
         }
       }
-      text = "You see a " + contents;
+      addLine("You see a " + contents);
     } else {
-      text = "You see nothing.";
+      addLine("You see nothing")
     }
-    addLine("You find yourself in a " + this.name + ". " + text);
   }
 
   inspect(player) {
-    if (this.descriptor) {
+    if (this.descriptor && player.location == this) {
       console.log("Printing description")
       addLine(this.descriptor);
     } else {
@@ -200,35 +168,6 @@ class Room {
   }
 }
 
-class Door extends Room {
-  constructor(name, descriptor) {
-    super(name, descriptor);
-    this.locked = true;
-    this.contents = null;
-  }
-
-  addItem(obj) {
-    this.contents = obj;
-  }
-
-  enter() {
-    if(this.locked == false) {
-      return this.contents;
-    } else {
-      addLine("The door is locked")
-      return null;
-    }
-  }
-
-  open() {
-    if(this.locked == false) {
-      player.move(this.contents[0])
-    } else {
-      addLine("The door is locked")
-    }
-  }
-}
-
 class Item {
   constructor(name, descriptor) {
     this.name = name;
@@ -245,40 +184,70 @@ class Player {
   constructor(location) {
     this.location = location;
     this.cameFrom = null;
+    this.inventory = [];
   }
 
-  move(destination) {
-    if (destination != null) {
-      this.cameFrom = this.location
-      this.location = destination;
-      this.location.readContents();
+  take(item) {
+    addLine("You put the " + item.name + " into your inventory")
+    this.inventory.push(item);
+
+    Item.prototype.take()
+  }
+
+  printInventory() {
+    console.log("reading inventory...");
+    let list = '';
+      for(var i in this.inventory) {
+        list = list + this.inventory[i].name;
+      }
+      addLine("You have a " + list + " in your inventory");
     }
   }
-}
 
-class Module extends Room {
-  constructor(name, script, description) {
-    super(name, description);
-    this.script = script;
-  }
 
-  enter() {
-    this.addModule();
-    return this;
-  }
 
-  addModule() {
-    let body = document.getElementsByTagName('body')[0];
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.onload = function() {
-      //You can put a load thing here.
-    }
-    script.src = this.script;
-    body.appendChild(script);
-  }
+// Create the contents of your room here.
+alert("Loading main.js!"); //Don't change this line
+player = new Player()
 
-  readContents() {
-    console.log("Moving to new module...")
-  }
-}
+//Create your objects
+let hallway = new Room("long hallway");
+let pedastal = new Item("pedastal", "an onyx colored marble webbed with white veins, chipped around the top edges and down the side. It has a dark liquid dripping out of the bowl and down the face. The liquid disappears down a slit at the base of the pedastal")
+let potion = new Item ("strange vial", "a large glass bottle, filled with a dark liquid and corked with a winestop")
+
+let room = new Room("dark room", "The room smells of sulfer. The floor is covered in thick dust and there are footprints leading through the door");
+let door = new Room ("door", "The door is solid oak with black, iron hinges on this side.")
+let table = new Item ("table", "light wood, covered in stains and cuts. It has two drawers")
+
+let foyer = new Room("huge foyer", "The foyer has two sets of stairs. One set goes up, one goes down.")
+let stand = new Item("stand", "small. It has robes on it.")
+let robes = new Item ("robe", "dark and covered in stains")
+
+let stairsup = new Room ("stairs up", "It is a large set of hardwood steps extending up into nothing. They're rarely used and covered in dust.")
+let nail = new Item ("nail", "rusty and covered in blood. It is bent out of shape.")
+
+let stairsdown = new Room ("stairs down", "It is a narrow set of concrete stairs going down into nothing. They seem to be used extremely often. A dark liquid drips down the stairs.")
+
+// Put them in their spots
+hallway.addItem(pedastal);
+hallway.addItem(potion);
+
+let locations = [];
+locations.push(hallway, room);
+player.location = new Room("hallway");
+
+room.addItem(door);
+room.addItem(table);
+
+door.addItem(foyer);
+
+foyer.addItem(stairsup);
+foyer.addItem(stairsdown);
+foyer.addItem(robes);
+foyer.addItem(stand);
+
+stairsup.addItem(nail);
+
+player.location.addItems(locations);
+
+player.location.enter();
