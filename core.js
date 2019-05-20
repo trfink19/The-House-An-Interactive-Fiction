@@ -4,6 +4,7 @@ var regexes = [
   /enter/,
   /go back/,
   /inspect/,
+  /exit/,
 ]
 
 var actions = [
@@ -27,6 +28,12 @@ var actions = [
     }
     return player;
   },
+  function(action, player, object) {
+    if(action == 'exit') {
+      location.reload();
+    }
+    return player;
+  }
 ]
 
 function parse(input) {
@@ -246,5 +253,32 @@ class Player {
       this.location = destination;
       this.location.readContents();
     }
+  }
+}
+
+class Module extends Room {
+  constructor(script) {
+    super('door', 'description');
+    this.script = script;
+  }
+
+  enter() {
+    this.addModule();
+    return this;
+  }
+
+  addModule() {
+    let body = document.getElementsByTagName('body')[0];
+    let script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.onload = function() {
+      load();
+    }
+    script.src = this.script;
+    body.appendChild(script);
+  }
+
+  readContents() {
+    console.log("Moving to new module...")
   }
 }
