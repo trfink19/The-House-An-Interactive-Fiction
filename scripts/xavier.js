@@ -38,10 +38,7 @@ start.addItem(dresser);
 start.addItem(microwave);
 start.addItem(stove);
 
-player.move(bedroom);
-player.move(hallway);
-player.move(garage);
-player.move(livingRoom);
+
 player.move(start);
 
 Item.prototype.eat = function () {

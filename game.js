@@ -24,7 +24,7 @@ let hhhh = new Room('long hallway', 'There are many doors on either side of the 
 let atrium = new Room('atrium', 'There are many doors all around you. Above, a glass ceiling reveals the tops of trees growing over the building.')
 for(i in scripts1) {
   modules1.push(new Module(scripts1[i] + "'s room", "scripts/" + scripts1[i]+".js", "You see light under the door. Shadows move back and forth as you watch."));
-  hallway.addItem(modules1[i]);
+  hhhh.addItem(modules1[i]);
 }
 
 for(i in scripts2) {
