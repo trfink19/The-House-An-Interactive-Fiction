@@ -1,89 +1,85 @@
 // Create the contents of your room here.
+
+
 alert("Loading main.js!"); //Don't change this line
 player = new Player()
 
 //Create your objects
-//let hallway = new Room("dusty hallway", "clouds of dust kick up with every step.");
-//let vase = new Item("vase", "made of blue glass, chipped on top. Filled with a dark liquid.")
-//let room = new Room("dark room", "It is dark");
-let hallway = new Room("hallway", "it is very eery...");
-let bedroom = new Room("bedroom","there is a creepy blind guy in there...")
-let dungeon = new Room("dungeon","it is very dark...")
-let kitchen = new Room("kitchen","there is good looking food in there...")
-let diningroom = new Room("dining room","there is a wierd looking family in there...")
-let bathroom = new Room("bathroom","it is very messy.")
-let bed = new Item("bed","made of wood.");
-let mirror = new Item("mirror","fancy.");
-let key = new Item("key","big and rusty.");
-let knife = new Item("knife","bloody.");
-let plateoffood = new Item("plate of food","very yummy smelling.");
-let cup = new Item("cup","clean.");
-let chair = new Item("chair","fancy.");
-let table = new Item("table","fancy.");
-let sink = new Item("sink","not working very well.");
-let bathtub = new Item("bathtub","very dirty.");
-let closet = new Item("closet","filled with clothes.")
-let door = new Door("door","locked. It may need a key.");
-door.locked = true;
-let creepyfamily = new Item("creepy family", "enjoying their delicious meal.");
-let blindguy = new Item("blind guy sitting in a chair", "sitting quietly.");
-
+let hallway = new Room("hallway");
+let kitchen = new Room("kitchen", "The kitchen is wet with fresh blood.");
+let bedroom = new Room("master bedroom", "The bedroom floor creaks every time you step with a sound coming from the closet.")
+let basement = new Room("basement", "The basement is pitch black with sound of water drops and footsteps.");
+let chaosCorner = new Room("guest bedroom", "You find yourself in the middle of chaos, dolls moving and tweezers slicing.")
+let butcherHollow = new Room("butchers basement", "You see a man slicing dead animals and he's coming for you.")
+let towel = new Item("towel", "soaking in blood.")
+let bread = new Item("bread", "moldy with bite marks.")
+let doll = new Item("doll", "slowly walking towards you and whispering things to you.")
+let tweezers = new Item("tweezer", "sharp with blood on the tip and fingerprints in blood.")
+let sword = new Item("sword", "silver with a diamond handle.")
+let skeletonBone = new Item("skeletonBone", "dry with remains of humans.")
+let vase = new Item("vase", "golden with symbols of war.")
+let suitcase = new Item("suitcase", "ripped with bodies inside.")
+let roosterFeet = new Item("roosterFeet", "rotten with a mold scent coming off of it.")
+let pigBrain = new Item("pigBrain", "squishy and shredded by the butcher.")
+addLine("Fuctions lick, beat, and touch are now available")
 // Put them in their spots
-//hallway.addItem(vase);
-diningroom.addItem(creepyfamily);
-bedroom.addItem(blindguy);
-dungeon.addItem(door);
-bedroom.addItem(closet);
-hallway.addItem(bedroom);
-door.addItem(hallway);
-//hallway.addItem(dungeon);
-hallway.addItem(bathroom);
-hallway.addItem(kitchen);
-hallway.addItem(diningroom);
-bedroom.addItem(bed);
-bedroom.addItem(mirror);
-dungeon.addItem(key);
-dungeon.addItem(knife);
-kitchen.addItem(plateoffood);
-kitchen.addItem(cup);
-diningroom.addItem(plateoffood);
-diningroom.addItem(chair);
-diningroom.addItem(table);
-bathroom.addItem(sink);
-bathroom.addItem(bathtub);
+kitchen.addItem(towel);
+kitchen.addItem(bread);
+kitchen.addItem(butcherHollow);
+kitchen.addItem(basement);
+bedroom.addItem(suitcase);
+bedroom.addItem(vase);
+bedroom.addItem(chaosCorner);
+basement.addItem(sword);
+basement.addItem(skeletonBone);
+chaosCorner.addItem(doll);
+chaosCorner.addItem(tweezers);
+butcherHollow.addItem(roosterFeet);
+butcherHollow.addItem(pigBrain);
+let locations = [];
+locations.push(kitchen, bedroom);
 
-let talkAction = /talk/;
-let talk = function(action, player, object) {
-  if (action == 'talk') {
-    object.talk();
+hallway.addItems(locations);
+
+player.move(hallway);
+
+let beatAction = /beat/;
+let beat = function(action, player, object) {
+  if (action == 'beat') {
+    object.beat();
+    //player.location.removeItem(object.name);
   }
   return player;
 }
+addAction(beatAction, beat);
 
-Item.prototype.talk = function() {
-  addLine("You tried to talk to the " + this.name + " they smile, but don't answer you...");
+Item.prototype.beat = function() {
+  addLine("You beat the " + this.name + " and it's been destroyed.");
 }
 
-let eatAction = /eat/;
-let eat = function(action, player, object) {
-  if (action == 'eat') {
-    object.eat();
+
+let lickAction = /lick/;
+let lick = function(action, player, object) {
+  if (action == 'lick') {
+    object.lick();
   }
   return player;
 }
-//addAction(eatAction, eat);
-//  addline("You have eaten the food. You feel dizzy and pass out.")
+addAction(lickAction, lick);
 
-  Item.prototype.eat = function() {
-    addLine("You have eaten the " + this.name + ", You feel dizzy and pass out...");
-
-  player.move(dungeon)
-  player.cameFrom = null;
+Item.prototype.lick = function() {
+  addLine("You lick the " + this.name + " and you have been burned.");
 }
 
+let touchAction = /touch/;
+let touch = function(action, player, object) {
+  if (action == 'touch') {
+    object.touch();
+  }
+  return player;
+}
+addAction(touchAction, touch);
 
-addAction(eatAction , eat);
-addAction(talkAction, talk);
-
-
-player.move(hallway)
+Item.prototype.touch = function() {
+  addLine("You touch the " + this.name + " and your hands are wet.");
+}
